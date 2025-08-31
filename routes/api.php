@@ -312,6 +312,16 @@ Route::middleware(['throttle:ip-limit'])->group(function () {
     Route::get('testcourse', [CourseController::class, 'index']);
 });
 
+// Simple test endpoint without database
+Route::get('test', function () {
+    return response()->json([
+        'status' => 'success',
+        'message' => 'API is working!',
+        'timestamp' => now(),
+        'app' => 'Lumiere API'
+    ]);
+});
+
 
 Route::post('/private-image', function (Request $request) {
     $file = $request->file('file');
