@@ -131,5 +131,5 @@ databases:
   - name: lumiere-db
     databaseName: lumiere_production
     user: lumiere_user
-    plan: starter
+    plan: free
     region: oregon
