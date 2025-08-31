@@ -1,0 +1,146 @@
+services:
+  # Main Web Service
+  - type: web
+    name: lumiere-web
+    runtime: docker
+    plan: standard
+    region: oregon
+    buildCommand: |
+      echo "Building Laravel application..."
+      composer install --no-dev --optimize-autoloader
+      npm install && npm run build
+    startCommand: "./start.sh"
+    healthCheckPath: /
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_DRIVER
+        value: database
+      - key: DB_CONNECTION
+        value: pgsql
+      # Add your environment variables here
+      # - key: APP_KEY
+      #   sync: false
+      # - key: DB_HOST
+      #   fromDatabase:
+      #     name: lumiere-db
+      #     property: host
+      # - key: DB_PORT
+      #     fromDatabase:
+      #       name: lumiere-db
+      #       property: port
+      # - key: DB_DATABASE
+      #   fromDatabase:
+      #     name: lumiere-db
+      #     property: database
+      # - key: DB_USERNAME
+      #   fromDatabase:
+      #     name: lumiere-db
+      #     property: user
+      # - key: DB_PASSWORD
+      #   fromDatabase:
+      #     name: lumiere-db
+      #     property: password
+
+  # Queue Worker Service
+  - type: worker
+    name: lumiere-queue-worker
+    runtime: docker
+    plan: starter
+    region: oregon
+    buildCommand: |
+      echo "Building Laravel queue worker..."
+      composer install --no-dev --optimize-autoloader
+    startCommand: "./scripts/queue-worker.sh"
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: DB_CONNECTION
+        value: pgsql
+      # Sync environment variables with web service
+      # - key: APP_KEY
+      #   sync: false
+      # - key: DB_HOST
+      #   fromDatabase:
+      #     name: lumiere-db
+      #     property: host
+      # - key: DB_PORT
+      #   fromDatabase:
+      #     name: lumiere-db
+      #     property: port
+      # - key: DB_DATABASE
+      #   fromDatabase:
+      #     name: lumiere-db
+      #     property: database
+      # - key: DB_USERNAME
+      #   fromDatabase:
+      #     name: lumiere-db
+      #     property: user
+      # - key: DB_PASSWORD
+      #   fromDatabase:
+      #     name: lumiere-db
+      #     property: password
+
+  # Cron Job for Laravel Scheduler
+  - type: cron
+    name: lumiere-scheduler
+    runtime: docker
+    schedule: "* * * * *"  # Every minute (Laravel scheduler will handle the actual timing)
+    buildCommand: |
+      echo "Building Laravel scheduler..."
+      composer install --no-dev --optimize-autoloader
+    startCommand: "./scripts/scheduler.sh"
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: DB_CONNECTION
+        value: pgsql
+      # Sync environment variables with web service
+      # - key: APP_KEY
+      #   sync: false
+      # - key: DB_HOST
+      #   fromDatabase:
+      #     name: lumiere-db
+      #     property: host
+      # - key: DB_PORT
+      #   fromDatabase:
+      #     name: lumiere-db
+      #     property: port
+      # - key: DB_DATABASE
+      #   fromDatabase:
+      #     name: lumiere-db
+      #     property: database
+      # - key: DB_USERNAME
+      #   fromDatabase:
+      #     name: lumiere-db
+      #     property: user
+      # - key: DB_PASSWORD
+      #   fromDatabase:
+      #     name: lumiere-db
+      #     property: password
+
+# Database (optional - if you want Render to manage your database)
+databases:
+  - name: lumiere-db
+    databaseName: lumiere_production
+    user: lumiere_user
+    plan: starter
+    region: oregon
