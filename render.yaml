@@ -3,7 +3,7 @@ services:
   - type: web
     name: lumiere-web
     runtime: docker
-    plan: standard
+    plan: starter
     region: oregon
     healthCheckPath: /
     envVars:
@@ -37,41 +37,42 @@ services:
       # - key: DB_PASSWORD
       #   value: your-database-password
 
-  # Queue Worker Service (optional - remove if not needed initially)
-  - type: worker
-    name: lumiere-queue-worker
-    runtime: docker
-    plan: starter
-    region: oregon
-    dockerfilePath: ./Dockerfile.worker
-    envVars:
-      - key: APP_ENV
-        value: production
-      - key: APP_DEBUG
-        value: false
-      - key: LOG_CHANNEL
-        value: stderr
-      - key: QUEUE_CONNECTION
-        value: database
-      - key: DB_CONNECTION
-        value: pgsql
-      # Same external database variables as web service
+# Commented out for initial deployment - enable after web service is working
+# Queue Worker Service (optional - remove if not needed initially)
+# - type: worker
+#   name: lumiere-queue-worker
+#   runtime: docker
+#   plan: starter
+#   region: oregon
+#   dockerfilePath: ./Dockerfile.worker
+#   envVars:
+#     - key: APP_ENV
+#       value: production
+#     - key: APP_DEBUG
+#       value: false
+#     - key: LOG_CHANNEL
+#       value: stderr
+#     - key: QUEUE_CONNECTION
+#       value: database
+#     - key: DB_CONNECTION
+#       value: pgsql
+#     # Same external database variables as web service
 
-  # Cron Job for Laravel Scheduler (optional - remove if not needed initially)
-  - type: cron
-    name: lumiere-scheduler
-    runtime: docker
-    schedule: "* * * * *"
-    dockerfilePath: ./Dockerfile.scheduler
-    envVars:
-      - key: APP_ENV
-        value: production
-      - key: APP_DEBUG
-        value: false
-      - key: LOG_CHANNEL
-        value: stderr
-      - key: DB_CONNECTION
-        value: pgsql
-      # Same external database variables as web service
+# Cron Job for Laravel Scheduler (optional - remove if not needed initially)
+# - type: cron
+#   name: lumiere-scheduler
+#   runtime: docker
+#   schedule: "* * * * *"
+#   dockerfilePath: ./Dockerfile.scheduler
+#   envVars:
+#     - key: APP_ENV
+#       value: production
+#     - key: APP_DEBUG
+#       value: false
+#     - key: LOG_CHANNEL
+#       value: stderr
+#     - key: DB_CONNECTION
+#       value: pgsql
+#     # Same external database variables as web service
 
 # No databases section = using external database

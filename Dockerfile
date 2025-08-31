@@ -17,4 +17,15 @@ ENV LOG_CHANNEL stderr
 # Allow composer to run as root
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
-CMD ["/start.sh"]
+# Install dependencies
+RUN composer install --optimize-autoloader --no-dev
+
+# Set permissions
+RUN chown -R nginx:nginx /var/www/html
+RUN chmod -R 755 /var/www/html/storage
+RUN chmod -R 755 /var/www/html/bootstrap/cache
+
+# Make startup script executable
+RUN chmod +x /var/www/html/scripts/start.sh
+
+CMD ["/var/www/html/scripts/start.sh"]
