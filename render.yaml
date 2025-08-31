@@ -5,11 +5,6 @@ services:
     runtime: docker
     plan: standard
     region: oregon
-    buildCommand: |
-      echo "Building Laravel application..."
-      composer install --no-dev --optimize-autoloader
-      npm install && npm run build
-    startCommand: "./start.sh"
     healthCheckPath: /
     envVars:
       - key: APP_ENV
@@ -56,10 +51,7 @@ services:
     runtime: docker
     plan: starter
     region: oregon
-    buildCommand: |
-      echo "Building Laravel queue worker..."
-      composer install --no-dev --optimize-autoloader
-    startCommand: "./scripts/queue-worker.sh"
+    dockerfilePath: ./Dockerfile.worker
     envVars:
       - key: APP_ENV
         value: production
@@ -100,10 +92,7 @@ services:
     name: lumiere-scheduler
     runtime: docker
     schedule: "* * * * *"  # Every minute (Laravel scheduler will handle the actual timing)
-    buildCommand: |
-      echo "Building Laravel scheduler..."
-      composer install --no-dev --optimize-autoloader
-    startCommand: "./scripts/scheduler.sh"
+    dockerfilePath: ./Dockerfile.scheduler
     envVars:
       - key: APP_ENV
         value: production
